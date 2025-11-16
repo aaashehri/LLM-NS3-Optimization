@@ -1,0 +1,10 @@
+Iteration,Throughput(Mbps),Latency(ms),DataRate
+1,180.566,2,200Mbps
+2,180.566,2,200Mbps
+3,225.678,2,250Mbps
+1,225.678,2,250Mbps
+2,225.678,2,250Mbps
+3,258.432,2,300Mbps
+1,258.928,2,500Mbps
+2,248.804,2,1000Mbps
+3,248.804,2,1000Mbps

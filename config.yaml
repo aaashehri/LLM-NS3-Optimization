@@ -1,0 +1,3 @@
+DataRate: 500Mbps
+PacketSize: 1500
+QueueLimit: 200
