@@ -1,234 +1,112 @@
-# The Network Simulator, Version 3
+# LLM-NS3-Optimization  
+**Closed-Loop Network Optimization Using Large Language Models and NS-3 Simulation**
 
-[![codecov](https://codecov.io/gh/nsnam/ns-3-dev-git/branch/master/graph/badge.svg)](https://codecov.io/gh/nsnam/ns-3-dev-git/branch/master/)
-[![Gitlab CI](https://gitlab.com/nsnam/ns-3-dev/badges/master/pipeline.svg)](https://gitlab.com/nsnam/ns-3-dev/-/pipelines)
-[![Github CI](https://github.com/nsnam/ns-3-dev-git/actions/workflows/per_commit.yml/badge.svg)](https://github.com/nsnam/ns-3-dev-git/actions)
+---
 
-[![Latest Release](https://gitlab.com/nsnam/ns-3-dev/-/badges/release.svg)](https://gitlab.com/nsnam/ns-3-dev/-/releases)
+## 🧠 Overview
+This project introduces an **AI-assisted adaptive optimization framework** that integrates the **NS-3 network simulator** with a **Large Language Model (LLM)** such as ChatGPT.  
+The framework establishes a **closed feedback loop** where NS-3 simulation metrics (throughput, latency, packet loss) are analyzed by the LLM, which then recommends optimized configuration parameters (e.g., data rate, queue limit, packet size).  
 
-## License
+This enables **autonomous network tuning** and **self-adaptive performance optimization** without human intervention.
 
-This software is licensed under the terms of the GNU General Public License v2.0 only (GPL-2.0-only).
-See the LICENSE file for more details.
+---
 
-## Table of Contents
+## ⚙️ System Architecture
+The framework consists of four main components:
 
-* [Overview](#overview-an-open-source-project)
-* [Building ns-3](#building-ns-3)
-* [Testing ns-3](#testing-ns-3)
-* [Running ns-3](#running-ns-3)
-* [ns-3 Documentation](#ns-3-documentation)
-* [Working with the Development Version of ns-3](#working-with-the-development-version-of-ns-3)
-* [Contributing to ns-3](#contributing-to-ns-3)
-* [Reporting Issues](#reporting-issues)
-* [Asking Questions](#asking-questions)
-* [ns-3 App Store](#ns-3-app-store)
+1. **Simulation Environment (NS-3)**  
+   Runs network experiments (wired or Wi-Fi) using parameters from a configuration file.
+2. **Configuration Management Layer**  
+   Reads and updates `config.yaml` dynamically based on AI suggestions.
+3. **AI Optimization Engine (LLM)**  
+   Analyzes simulation metrics and returns parameter recommendations in structured JSON.
+4. **Controller (Python)**  
+   Orchestrates the loop — executing simulations, collecting results, querying the LLM, and applying updates.
 
-> **NOTE**: Much more substantial information about ns-3 can be found at
-<https://www.nsnam.org>
+---
 
-## Overview: An Open Source Project
+## 🔁 Adaptive Workflow
+1. Initialize simulation parameters in `config.yaml`.  
+2. Run NS-3 and collect metrics (`results.csv`).  
+3. Send metrics to the LLM (via OpenAI API).  
+4. Parse the response and update configuration parameters.  
+5. Repeat until convergence or target performance is achieved.  
 
-ns-3 is a free open source project aiming to build a discrete-event
-network simulator targeted for simulation research and education.
-This is a collaborative project; we hope that
-the missing pieces of the models we have not yet implemented
-will be contributed by the community in an open collaboration
-process. If you would like to contribute to ns-3, please check
-the [Contributing to ns-3](#contributing-to-ns-3) section below.
+---
 
-This README excerpts some details from a more extensive
-tutorial that is maintained at:
-<https://www.nsnam.org/documentation/latest/>
+## 🧩 File Structure
 
-## Building ns-3
+├── scratch/
+│ └── run_simulation_wifi.cc # NS-3 Wi-Fi simulation file
+├── loop_wifi.py # Python controller for adaptive loop
+├── config.yaml # Dynamic configuration file
+├── results.csv # Stores simulation metrics
+├── log.csv # Records iteration results
+├── README.md # Documentation
 
-The code for the framework and the default models provided
-by ns-3 is built as a set of libraries. User simulations
-are expected to be written as simple programs that make
-use of these ns-3 libraries.
+---
 
-To build the set of default libraries and the example
-programs included in this package, you need to use the
-`ns3` tool. This tool provides a Waf-like API to the
-underlying CMake build manager.
-Detailed information on how to use `ns3` is included in the
-[quick start guide](doc/installation/source/quick-start.rst).
+## 📊 Example Output
+| Iteration | Throughput (Mbps) | Latency (ms) | Packet Loss (%) | Suggested DataRate |
+|------------|-------------------|---------------|------------------|--------------------|
+| 1 | 22.1 | 2 | 91.0 | 500 Mbps |
+| 2 | 25.6 | 2 | 80.5 | 1000 Mbps |
+| 3 | 29.5 | 2 | 72.4 | 1500 Mbps |
 
-Before building ns-3, you must configure it.
-This step allows the configuration of the build options,
-such as whether to enable the examples, tests and more.
+---
 
-To configure ns-3 with examples and tests enabled,
-run the following command on the ns-3 main directory:
+## 🚀 Getting Started
+### Prerequisites
+- macOS / Linux  
+- Python 3.12  
+- NS-3 (v3.37 or later)  
+- OpenAI API Key  
 
-```shell
-./ns3 configure --enable-examples --enable-tests
-```
+### Installation
+```bash
+# Clone the repository
+git clone https://github.com/aaashehri/LLM-NS3-Optimization.git
+cd LLM-NS3-Optimization
 
-Then, build ns-3 by running the following command:
+# Install dependencies
+pip install openai pyyaml pandas
 
-```shell
-./ns3 build
-```
+# Run a single simulation
+./ns3 run "scratch/run_simulation_wifi"
 
-By default, the build artifacts will be stored in the `build/` directory.
+# Start the adaptive loop
+python3 loop_wifi.py
 
-### Supported Platforms
+🧮 Key Features
 
-The current codebase is expected to build and run on the
-set of platforms listed in the [release notes](RELEASE_NOTES.md)
-file.
+Closed-loop adaptive optimization
 
-Other platforms may or may not work: we welcome patches to
-improve the portability of the code to these other platforms.
+Real-time feedback from LLM
 
-## Testing ns-3
+Automatic YAML configuration updates
 
-ns-3 contains test suites to validate the models and detect regressions.
-To run the test suite, run the following command on the ns-3 main directory:
+Support for both wired and Wi-Fi topologies
 
-```shell
-./test.py
-```
+Reproducible experiment logs
+📈 Experimental Results
 
-More information about ns-3 tests is available in the
-[test framework](doc/manual/source/test-framework.rst) section of the manual.
+Wired Network: Throughput improved from 45 Mbps → 90 Mbps (≈100% gain)
 
-## Running ns-3
+Wi-Fi Network: Throughput ≈ 30 Mbps with ≈91% packet loss reduction attempts
 
-On recent Linux systems, once you have built ns-3 (with examples
-enabled), it should be easy to run the sample programs with the
-following command, such as:
+Demonstrates semantic reasoning of LLMs for network parameter optimization.
+Future Work
 
-```shell
-./ns3 run simple-global-routing
-```
+Integration with Reinforcement Learning for hybrid optimization.
 
-That program should generate a `simple-global-routing.tr` text
-trace file and a set of `simple-global-routing-xx-xx.pcap` binary
-PCAP trace files, which can be read by `tcpdump -n -tt -r filename.pcap`.
-The program source can be found in the `examples/routing` directory.
+Multi-node and mobility-aware 6G scenarios.
 
-## Running ns-3 from Python
+On-device inference for real-time adaptive control.
+Citation
 
-If you do not plan to modify ns-3 upstream modules, you can get
-a pre-built version of the ns-3 python bindings. It is recommended
-to create a python virtual environment to isolate different application
-packages from system-wide packages (installable via the OS package managers).
+If you use this repository in your research, please cite:
 
-```shell
-python3 -m venv ns3env
-source ./ns3env/bin/activate
-pip install ns3
-```
+A. Alshehri, "Closed-Loop Network Optimization Using LLMs and NS-3 Simulation", 2025.
+License
 
-If you do not have `pip`, check their documents
-on [how to install it](https://pip.pypa.io/en/stable/installation/).
-
-After installing the `ns3` package, you can then create your simulation python script.
-Below is a trivial demo script to get you started.
-
-```python
-from ns import ns
-
-ns.LogComponentEnable("Simulator", ns.LOG_LEVEL_ALL)
-
-ns.Simulator.Stop(ns.Seconds(10))
-ns.Simulator.Run()
-ns.Simulator.Destroy()
-```
-
-The simulation will take a while to start, while the bindings are loaded.
-The script above will print the logging messages for the called commands.
-
-Use `help(ns)` to check the prototypes for all functions defined in the
-ns3 namespace. To get more useful results, query specific classes of
-interest and their functions e.g., `help(ns.Simulator)`.
-
-Smart pointers `Ptr<>` can be differentiated from objects by checking if
-`__deref__` is listed in `dir(variable)`. To dereference the pointer,
-use `variable.__deref__()`.
-
-Most ns-3 simulations are written in C++ and the documentation is
-oriented towards C++ users. The ns-3 tutorial programs (`first.cc`,
-`second.cc`, etc.) have Python equivalents, if you are looking for
-some initial guidance on how to use the Python API. The Python
-API may not be as full-featured as the C++ API, and an API guide
-for what C++ APIs are supported or not from Python do not currently exist.
-The project is looking for additional Python maintainers to improve
-the support for future Python users.
-
-## ns-3 Documentation
-
-Once you have verified that your build of ns-3 works by running
-the `simple-global-routing` example as outlined in the [running ns-3](#running-ns-3)
-section, it is quite likely that you will want to get started on reading
-some ns-3 documentation.
-
-All of that documentation should always be available from
-the ns-3 website: <https://www.nsnam.org/documentation/>.
-
-This documentation includes:
-
-* a tutorial
-* a reference manual
-* models in the ns-3 model library
-* a wiki for user-contributed tips: <https://www.nsnam.org/wiki/>
-* API documentation generated using doxygen: this is
-  a reference manual, most likely not very well suited
-  as introductory text:
-  <https://www.nsnam.org/doxygen/index.html>
-
-## Working with the Development Version of ns-3
-
-If you want to download and use the development version of ns-3, you
-need to use the tool `git`. A quick and dirty cheat sheet is included
-in the manual, but reading through the Git
-tutorials found in the Internet is usually a good idea if you are not
-familiar with it.
-
-If you have successfully installed Git, you can get
-a copy of the development version with the following command:
-
-```shell
-git clone https://gitlab.com/nsnam/ns-3-dev.git
-```
-
-However, we recommend to follow the GitLab guidelines for starters,
-that includes creating a GitLab account, forking the ns-3-dev project
-under the new account's name, and then cloning the forked repository.
-You can find more information in the [manual](https://www.nsnam.org/docs/manual/html/working-with-git.html).
-
-## Contributing to ns-3
-
-The process of contributing to the ns-3 project varies with
-the people involved, the amount of time they can invest
-and the type of model they want to work on, but the current
-process that the project tries to follow is described in the
-[contributing code](https://www.nsnam.org/developers/contributing-code/)
-website and in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
-
-## Reporting Issues
-
-If you would like to report an issue, you can open a new issue in the
-[GitLab issue tracker](https://gitlab.com/nsnam/ns-3-dev/-/issues).
-Before creating a new issue, please check if the problem that you are facing
-was already reported and contribute to the discussion, if necessary.
-
-## Asking Questions
-
-ns-3 has an official [ns-3-users message board](https://groups.google.com/g/ns-3-users)
-where the community asks questions and share helpful advice.
-Additionally, ns-3 has the [ns-3 Zulip chat](https://ns-3.zulipchat.com/), used to discuss
-development issues and questions among maintainers and the community.
-
-Please use the above resources to ask questions about ns-3, rather than creating issues.
-
-## ns-3 App Store
-
-The official [ns-3 App Store](https://apps.nsnam.org/) is a centralized directory
-listing third-party modules for ns-3 available on the Internet.
-
-More information on how to submit an ns-3 module to the ns-3 App Store is available
-in the [ns-3 App Store documentation](https://www.nsnam.org/docs/contributing/html/external.html).
+MIT License © 2025 Aziz Alshehri
